@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="45da1cf2-a7c2-414f-b1e8-15dc458f5487" >
+		<http:listener-connection host="${http.host}" port="${http.port}" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="0fda41ca-c401-4f8c-9412-bedbf81f6003" file="configuration_properties/${mule.env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="0ce5f080-69a6-4dfa-a078-30ec9bed3513" name="mule.env" value="dev" />
+	<flow name="pratapFlow" doc:id="0dd1352d-3efc-42dd-8a33-edda568880f3" >
+		<http:listener doc:name="Listener" doc:id="c2eb2fd9-68ff-44bd-baad-5530e84d409c" config-ref="HTTP_Listener_config" path="/${http.path}"/>
+		<ee:transform doc:name="Transform Message" doc:id="6f58842a-3fe6-4737-bfbe-ea7d02b95299" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{"bhanu": "pratap"
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="private_flow" ><![CDATA[%dw 2.0
+output application/json
+---
+{ message: Mule::lookup("hello",payload,60000)
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</flow>
+	<flow name="hello" doc:id="34204360-c319-4c3d-beda-ac69ab8ea192" >
+		<ee:transform doc:name="Transform Message" doc:id="bf6bbfc3-6176-42a1-8fcf-2c6de5723602" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/son
+---
+"sucess"
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
